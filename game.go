@@ -148,13 +148,13 @@ func placeMines(grid [][]int, n int) error {
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
 	if len(grid) <= 0 {
-		return errors.New("cannot place mines on a non existant grid")
+		return errors.New("cannot place mines on a non-existent grid")
 	}
 	nRows, nCols := len(grid), len(grid[0])
 	coords := []coord{}
 	for y := range grid {
 		for x := range grid[y] {
-			coords = append(coords, coord{y, x})
+			coords = append(coords, coord{x, y})
 		}
 	}
 
@@ -261,7 +261,7 @@ func NewGame(model *model) *game {
 	}
 }
 
-func (g game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	x, y := g.cursor.unwrap()
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -316,7 +316,7 @@ func (g game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return g.model, nil
 }
 
-func (g game) view() string {
+func (g *game) view() string {
 	var s string
 	s += "game status: " + g.gameState.String() + "\n"
 	for y := range g.cellStates {
@@ -350,9 +350,12 @@ func (g *game) setGrid(width, height, mines int) {
 			states[y][x] = hidden
 		}
 	}
+	g.cellStates = states
+	g.gameState = playableGame
 }
 
 func (g *game) setMode(mode gameMode) {
+	g.mode = mode
 	if mode == beginner {
 		g.setBeginner()
 	} else if mode == intermediate {
@@ -371,7 +374,7 @@ func (g *game) setIntermediate() {
 }
 
 func (g *game) setExpert() {
-	g.setGrid(16, 30, 99)
+	g.setGrid(30, 16, 99)
 }
 
 // func (g *game) setCustom() {}

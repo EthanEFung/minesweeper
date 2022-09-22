@@ -35,7 +35,6 @@ func (m *menu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.cursor -= 1
 		case "enter":
 			m.model.game.setMode(m.modes[m.cursor])
-			m.model.game.gameState = playableGame
 			m.model.current = m.model.game
 		}
 	}
