@@ -23,3 +23,11 @@ go run .
 - press r to reset the board
 
 - press q to quit
+
+# todos
+- [ ] create classic games "l+r" click functionality (checks if )
+- [ ] create menu to configure the game
+- [ ] add timer
+- [ ] add view of the number of "potential" mines (# of mines - # of flags placed)
+- [ ] add mouse control
+- [ ] create scoreboard
