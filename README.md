@@ -1,4 +1,4 @@
-# minesweeper
+# vim minesweeper
 
 a simple project to learn the [bubbletea](https://github.com/charmbracelet/bubbletea) tui framework. This is currently in MVP, with future plans to improve.
 
@@ -25,9 +25,11 @@ go run .
 - press q to quit
 
 # todos
-- [ ] create classic games "l+r" click functionality (checks if )
-- [ ] create menu to configure the game
-- [ ] add timer
+- [ ] create classic games "l+r" click functionality (clears all cells around a cell without flags)
+- [x] create menu to configure the game
+- [x] add timer
 - [ ] add view of the number of "potential" mines (# of mines - # of flags placed)
-- [ ] add mouse control
+- [ ] ~~add mouse control~~
 - [ ] create scoreboard
+- [ ] make this into vim go! (Where all the operations are exclusively std vim operations)
+- [ ] create light and dark mode

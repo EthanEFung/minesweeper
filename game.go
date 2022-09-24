@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/charmbracelet/bubbles/stopwatch"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -249,6 +250,7 @@ type game struct {
 	cursor     coord
 	gameState  gameState
 	mode       gameMode
+	stopwatch  stopwatch.Model
 }
 
 func NewGame(model *model) *game {
@@ -258,6 +260,7 @@ func NewGame(model *model) *game {
 		cellStates: make([][]cellState, 0),
 		cursor:     coord{},
 		gameState:  pendingGame,
+		stopwatch:  stopwatch.New(),
 	}
 }
 
@@ -294,6 +297,9 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			show(g.grid, g.cellStates, x, y)
 			g.gameState = evaluate(g.grid, g.cellStates)
+			if g.gameState == wonGame || g.gameState == lostGame {
+				return g.model, g.stopwatch.Stop()
+			}
 		case "m":
 			if g.cellStates[y][x] == revealed {
 				break
@@ -311,14 +317,21 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else if g.mode == expert {
 				g.setExpert()
 			}
+			if g.stopwatch.Running() {
+				return g.model, g.stopwatch.Reset()
+			}
+			return g.model, tea.Batch(g.stopwatch.Reset(), g.stopwatch.Start())
 		}
 	}
-	return g.model, nil
+	var cmd tea.Cmd
+	g.stopwatch, cmd = g.stopwatch.Update(msg)
+	return g.model, cmd
 }
 
 func (g *game) view() string {
 	var s string
 	s += "game status: " + g.gameState.String() + "\n"
+	s += "time: " + g.stopwatch.View() + "\n"
 	for y := range g.cellStates {
 		for x := range g.cellStates[y] {
 			state := g.cellStates[y][x]

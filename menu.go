@@ -7,9 +7,9 @@ import (
 )
 
 type menu struct {
-	model   *model
-	cursor  int
-	modes   []gameMode
+	model  *model
+	cursor int
+	modes  []gameMode
 }
 
 func NewMenu(model *model) *menu {
@@ -36,6 +36,7 @@ func (m *menu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			m.model.game.setMode(m.modes[m.cursor])
 			m.model.current = m.model.game
+			return m.model, m.model.game.stopwatch.Start()
 		}
 	}
 	return m.model, nil
