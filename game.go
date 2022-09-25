@@ -251,7 +251,7 @@ type game struct {
 	gameState  gameState
 	mode       gameMode
 	stopwatch  stopwatch.Model
-	flags int
+	flags      int
 }
 
 func NewGame(model *model) *game {
@@ -262,7 +262,7 @@ func NewGame(model *model) *game {
 		cursor:     coord{},
 		gameState:  pendingGame,
 		stopwatch:  stopwatch.New(),
-		flags: 0,
+		flags:      0,
 	}
 }
 

@@ -12,11 +12,11 @@ type current interface {
 }
 
 type model struct {
-	mainMenu *mainMenu
-	playMenu    *playMenu
+	mainMenu     *mainMenu
+	playMenu     *playMenu
 	instructions *instructions
-	game    *game
-	current current
+	game         *game
+	current      current
 }
 
 func NewModel() model {

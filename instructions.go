@@ -43,6 +43,6 @@ func (i *instructions) view() string {
 	b.WriteString("At any point during play you can press 'r' to reset the game.\n\n")
 
 	b.WriteString("Now...press 'b', to go to the main menu and get sweeping!\n")
-	
+
 	return b.String()
 }

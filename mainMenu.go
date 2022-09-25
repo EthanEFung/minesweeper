@@ -7,7 +7,7 @@ import (
 )
 
 type mainMenu struct {
-	model *model
+	model  *model
 	cursor int
 }
 
@@ -48,8 +48,7 @@ func (m *mainMenu) view() string {
 	builder.WriteString("Welcom to Vim-Minesweeper\n")
 	builder.WriteString("Press j to move the cursor down, and k to move the cursor up.\n\n")
 
-	
-	{	// option 1: Play menu
+	{ // option 1: Play menu
 		builder.WriteString("[")
 		if m.cursor == 0 {
 			builder.WriteString(">")
@@ -60,7 +59,7 @@ func (m *mainMenu) view() string {
 		builder.WriteString(" Play\n")
 	}
 
-	{	// option 2: How to play
+	{ // option 2: How to play
 		builder.WriteString("[")
 		if m.cursor == 1 {
 			builder.WriteString(">")
