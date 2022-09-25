@@ -297,6 +297,9 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if g.cellStates[y][x] == revealed {
 				break
 			}
+			if g.cellStates[y][x] == flagged {
+				g.flags += 1
+			}
 			show(g.grid, g.cellStates, x, y)
 			g.gameState = evaluate(g.grid, g.cellStates)
 			if g.gameState == wonGame || g.gameState == lostGame {
