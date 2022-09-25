@@ -16,9 +16,9 @@ go run .
 # to play
 - using h, j, k, l navigate the cursor
 
-- press the space bar to select the cell
+- press x to select the cell
 
-- press m to flag the cell
+- press f to flag the cell
 
 - press r to reset the board
 
@@ -28,8 +28,9 @@ go run .
 - [ ] create classic games "l+r" click functionality (clears all cells around a cell without flags)
 - [x] create menu to configure the game
 - [x] add timer
-- [ ] add view of the number of "potential" mines (# of mines - # of flags placed)
+- [x] add view of the number of "potential" mines (# of mines - # of flags placed)
 - [ ] ~~add mouse control~~
 - [ ] create scoreboard
 - [ ] make this into vim go! (Where all the operations are exclusively std vim operations)
 - [ ] create light and dark mode
+- [x] add how to play menu

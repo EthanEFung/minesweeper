@@ -12,7 +12,9 @@ type current interface {
 }
 
 type model struct {
-	menu    *menu
+	mainMenu *mainMenu
+	playMenu    *playMenu
+	instructions *instructions
 	game    *game
 	current current
 }
@@ -20,8 +22,10 @@ type model struct {
 func NewModel() model {
 	m := new(model)
 	m.game = NewGame(m)
-	m.menu = NewMenu(m)
-	m.current = m.menu
+	m.playMenu = NewPlayMenu(m)
+	m.mainMenu = NewMainMenu(m)
+	m.instructions = NewInstructions(m)
+	m.current = m.mainMenu
 	// hmm this seems suspicious
 	return *m
 }

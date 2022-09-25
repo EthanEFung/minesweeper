@@ -251,6 +251,7 @@ type game struct {
 	gameState  gameState
 	mode       gameMode
 	stopwatch  stopwatch.Model
+	flags int
 }
 
 func NewGame(model *model) *game {
@@ -261,6 +262,7 @@ func NewGame(model *model) *game {
 		cursor:     coord{},
 		gameState:  pendingGame,
 		stopwatch:  stopwatch.New(),
+		flags: 0,
 	}
 }
 
@@ -291,7 +293,7 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				break
 			}
 			g.cursor = coord{x + 1, y}
-		case " ":
+		case "x":
 			if g.cellStates[y][x] == revealed {
 				break
 			}
@@ -300,15 +302,17 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if g.gameState == wonGame || g.gameState == lostGame {
 				return g.model, g.stopwatch.Stop()
 			}
-		case "m":
+		case "f":
 			if g.cellStates[y][x] == revealed {
 				break
 			}
 			if g.cellStates[y][x] == flagged {
 				g.cellStates[y][x] = hidden
+				g.flags += 1
 				break
 			}
 			g.cellStates[y][x] = flagged
+			g.flags -= 1
 		case "r":
 			if g.mode == beginner {
 				g.setBeginner()
@@ -332,6 +336,7 @@ func (g *game) view() string {
 	var s string
 	s += "game status: " + g.gameState.String() + "\n"
 	s += "time: " + g.stopwatch.View() + "\n"
+	s += "mines: " + strconv.Itoa(g.flags) + "\n"
 	for y := range g.cellStates {
 		for x := range g.cellStates[y] {
 			state := g.cellStates[y][x]
@@ -365,6 +370,7 @@ func (g *game) setGrid(width, height, mines int) {
 	}
 	g.cellStates = states
 	g.gameState = playableGame
+	g.flags = mines // the same number of flags as mines
 }
 
 func (g *game) setMode(mode gameMode) {

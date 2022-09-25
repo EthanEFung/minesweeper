@@ -6,18 +6,18 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type menu struct {
+type playMenu struct {
 	model  *model
 	cursor int
 	modes  []gameMode
 }
 
-func NewMenu(model *model) *menu {
+func NewPlayMenu(model *model) *playMenu {
 	modes := []gameMode{beginner, intermediate, expert}
-	return &menu{model, 0, modes}
+	return &playMenu{model, 0, modes}
 }
 
-func (m *menu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *playMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -33,6 +33,8 @@ func (m *menu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				break
 			}
 			m.cursor -= 1
+		case "b":
+			m.model.current = m.model.mainMenu
 		case "enter":
 			m.model.game.setMode(m.modes[m.cursor])
 			m.model.current = m.model.game
@@ -42,7 +44,7 @@ func (m *menu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m.model, nil
 }
 
-func (m *menu) view() string {
+func (m *playMenu) view() string {
 	b := strings.Builder{}
 	for i, mode := range m.modes {
 		if i == m.cursor {
