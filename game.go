@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/stopwatch"
@@ -19,19 +20,6 @@ const (
 	wonGame
 	lostGame
 )
-
-func (gs gameState) String() string {
-	switch gs {
-	case playableGame:
-		return "playable"
-	case wonGame:
-		return "won"
-	case lostGame:
-		return "lost"
-	default:
-		return "unknown"
-	}
-}
 
 type gameMode int64
 
@@ -97,6 +85,7 @@ var revealedStyles = []lipgloss.Style{
 	// turquoise
 	baseStyle.Copy().Foreground(lipgloss.Color("#0FF")),
 }
+var digitsStyle = baseStyle.Copy().Foreground(lipgloss.Color("#F00"))
 
 func createFocusedStyle(style lipgloss.Style) lipgloss.Style {
 	return style.Copy().Background(lipgloss.Color("#696969"))
@@ -336,19 +325,56 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (g *game) view() string {
-	var s string
-	s += "game status: " + g.gameState.String() + "\n"
-	s += "time: " + g.stopwatch.View() + "\n"
-	s += "mines: " + strconv.Itoa(g.flags) + "\n"
+	b := strings.Builder{}
+
+	space := strings.Repeat(" ", len(g.grid[0])/2*3-4)
+
+	digits := strconv.Itoa(g.flags)
+	if g.flags > 999 {
+		digits = "999"
+	}
+	if len(digits) < 3 {
+		digits = strings.Repeat("0", 3-len(digits)) + digits
+	}
+
+	b.WriteString(digitsStyle.Render("\n" + digits))
+	b.WriteString(space)
+
+	switch g.gameState {
+	case wonGame:
+		b.WriteString("😎")
+	case lostGame:
+		b.WriteString("😵")
+	default:
+		b.WriteString("🙂")
+	}
+
+	b.WriteString(space)
+	if len(g.grid[0])%2 == 1 {
+		b.WriteString("   ")
+	}
+
+	elapsed := g.stopwatch.Elapsed()
+	s := int(elapsed.Seconds())
+	digits = strconv.Itoa(s)
+	if s > 999 {
+		digits = "999"
+	}
+	if len(digits) < 3 {
+		digits = strings.Repeat("0", 3-len(digits)) + digits
+	}
+
+	b.WriteString(digitsStyle.Render(digits))
+	b.WriteString("\n\n")
 	for y := range g.cellStates {
 		for x := range g.cellStates[y] {
 			state := g.cellStates[y][x]
 			coordinate := coord{x, y}
-			s += state.view(g.grid[y][x], coordinate == g.cursor)
+			b.WriteString(state.view(g.grid[y][x], coordinate == g.cursor))
 		}
-		s += "\n\n"
+		b.WriteString("\n\n")
 	}
-	return s
+	return b.String()
 }
 
 func (g *game) setGrid(width, height, mines int) {
