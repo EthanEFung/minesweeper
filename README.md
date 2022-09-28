@@ -9,19 +9,15 @@ a simple project to learn the [bubbletea](https://github.com/charmbracelet/bubbl
 of go installed
 - from your terminal navigate to this directory  
 ```bash
-go mod tidy
+go install
 go run .
 ```
 
 # to play
 - using h, j, k, l navigate the cursor
-
 - press x to select the cell
-
 - press f to flag the cell
-
 - press r to reset the board
-
 - press q to quit
 
 # todos
@@ -34,3 +30,4 @@ go run .
 - [ ] make this into vim go! (Where all the operations are exclusively std vim operations)
 - [ ] create light and dark mode
 - [x] add how to play menu
+- [ ] allow users to jump multiple rows or columns

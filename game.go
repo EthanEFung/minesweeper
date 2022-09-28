@@ -327,7 +327,8 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (g *game) view() string {
 	b := strings.Builder{}
 
-	space := strings.Repeat(" ", len(g.grid[0])/2*3-4)
+	width := len(g.grid[0])
+	space := strings.Repeat(" ", width/2*3-4)
 
 	digits := strconv.Itoa(g.flags)
 	if g.flags > 999 {
@@ -339,6 +340,9 @@ func (g *game) view() string {
 
 	b.WriteString(digitsStyle.Render("\n" + digits))
 	b.WriteString(space)
+	if width%2 == 1 {
+		b.WriteString(" ")
+	}
 
 	switch g.gameState {
 	case wonGame:
@@ -350,8 +354,8 @@ func (g *game) view() string {
 	}
 
 	b.WriteString(space)
-	if len(g.grid[0])%2 == 1 {
-		b.WriteString("   ")
+	if width%2 == 1 {
+		b.WriteString("  ")
 	}
 
 	elapsed := g.stopwatch.Elapsed()
