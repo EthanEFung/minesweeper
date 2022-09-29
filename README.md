@@ -16,12 +16,13 @@ go run .
 # to play
 - using h, j, k, l navigate the cursor
 - press x to select the cell
+- press d on a revealed number to select all adjacent cells that have not been flagged
 - press f to flag the cell
 - press r to reset the board
 - press q to quit
 
 # todos
-- [ ] create classic games "l+r" click functionality (clears all cells around a cell without flags)
+- [x] create classic games "l+r" click functionality (clears all cells around a cell without flags)
 - [x] create menu to configure the game
 - [x] add timer
 - [x] add view of the number of "potential" mines (# of mines - # of flags placed)

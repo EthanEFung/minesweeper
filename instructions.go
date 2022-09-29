@@ -36,9 +36,10 @@ func (i *instructions) view() string {
 	b.WriteString("Instead focus on moving the cursor using 'h','j','k', and 'l'.\n\n")
 
 	b.WriteString("Press 'x' and mimic removing a character to select and reveal a cell.\n")
+	b.WriteString("Press 'd' on a revealed number to select and reveal all non-flagged adjacent cells\n          (mimicking deleting a word).\n")
 	b.WriteString("Press 'q' at any point (in game or not) to terminate the program.\n\n")
 
-	b.WriteString("Here are some commands you can issue that does not mimic vim.\n")
+	b.WriteString("Here are some commands you can issue that does not mimic vim.\n\n")
 	b.WriteString("You can toggle flags on unrevealed cells by pressing 'f'.\n")
 	b.WriteString("At any point during play you can press 'r' to reset the game.\n\n")
 

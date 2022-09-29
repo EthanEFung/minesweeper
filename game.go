@@ -294,6 +294,31 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if g.gameState == wonGame || g.gameState == lostGame {
 				return g.model, g.stopwatch.Stop()
 			}
+		case "d": {
+			if g.cellStates[y][x] == hidden || g.cellStates[y][x] == flagged {
+				break
+			}
+			adjacent := []coord{
+				{ x-1, y-1 }, { x, y-1 }, { x+1, y-1 },
+				{ x-1, y }, { x+1, y },
+				{ x-1, y+1 }, { x, y+1 }, { x+1, y+1 },
+			}
+			for _, a := range adjacent {
+				if a.y < 0 || a.y > len(g.cellStates) - 1 {
+					continue
+				}
+				if a.x < 0 || a.x > len(g.cellStates[y]) - 1 {
+					continue
+				}
+				if g.cellStates[a.y][a.x] == hidden {
+					show(g.grid, g.cellStates, a.x, a.y)
+					g.gameState = evaluate(g.grid, g.cellStates)
+				}
+				if g.gameState == wonGame || g.gameState == lostGame {
+					return g.model, g.stopwatch.Stop()
+				}
+			}
+		}
 		case "f":
 			if g.cellStates[y][x] == revealed {
 				break
