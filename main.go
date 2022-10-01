@@ -26,12 +26,11 @@ func NewModel() model {
 	m.mainMenu = NewMainMenu(m)
 	m.instructions = NewInstructions(m)
 	m.current = m.mainMenu
-	// hmm this seems suspicious
 	return *m
 }
 
 func (m model) Init() tea.Cmd {
-	return m.game.stopwatch.Init()
+	return nil
 }
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m.current.update(msg)
