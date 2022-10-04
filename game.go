@@ -343,6 +343,10 @@ func (g *game) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return g.model, g.stopwatch.Reset()
 			}
 			return g.model, tea.Batch(g.stopwatch.Reset(), g.stopwatch.Start())
+		case "w":
+			if g.gameState == wonGame {
+				g.model.current = g.model.saveMenu
+			}
 		}
 	}
 	var cmd tea.Cmd
