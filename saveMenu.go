@@ -9,19 +9,33 @@ import (
 type saveMenu struct {
 	model    *model
 	initials []rune
+	cursor   int
 }
 
+var baseFocusedStyle = createFocusedStyle(baseStyle)
+
 func NewSaveMenu(m *model) *saveMenu {
-	return &saveMenu{m, []rune{}}
+	return &saveMenu{
+		model:    m,
+		initials: []rune{'A', 'A', 'A'},
+		cursor:   0,
+	}
 }
 
 func (m *saveMenu) view() string {
 	b := strings.Builder{}
 	b.WriteString("\n")
-	for _, char := range m.initials {
-		b.WriteRune(char)
+	b.WriteString("Change the initials using h, j, k, and l. Press y to save.\n")
+	b.WriteString("Pressing n will take you to the menu\n\n")
+	for i, char := range m.initials {
+		str := string(char)
+		if i == m.cursor {
+			b.WriteString(baseFocusedStyle.Render(str))
+			continue
+		}
+		b.WriteString(baseStyle.Render(str))
 	}
-	b.WriteString("\nSave? (y / n)\n")
+	b.WriteString("\n\nSave? (y / n)\n")
 
 	return b.String()
 }
@@ -32,11 +46,27 @@ func (m *saveMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m.model, tea.Quit
-		case "n", "b":
+		case "n":
 			m.model.game = NewGame(m.model)
 			m.model.current = m.model.mainMenu
-		case "y", "w":
+		case "y":
 			save(m.model.game, m.initials)
+		case "h":
+			if m.cursor > 0 {
+				m.cursor--
+			}
+		case "l":
+			if m.cursor < 2 {
+				m.cursor++
+			}
+		case "j":
+			if m.initials[m.cursor] < 'Z' {
+				m.initials[m.cursor]++
+			}
+		case "k":
+			if m.initials[m.cursor] > 'A' {
+				m.initials[m.cursor]--
+			}
 		}
 	}
 	return m.model, nil
