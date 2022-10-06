@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
+	"log"
+	"os"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -51,6 +55,7 @@ func (m *saveMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.model.current = m.model.mainMenu
 		case "y":
 			save(m.model.game, m.initials)
+			m.model.current = m.model.scores
 		case "h":
 			if m.cursor > 0 {
 				m.cursor--
@@ -74,4 +79,17 @@ func (m *saveMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func save(game *game, initials []rune) {
 	// ...
+	file, err := os.OpenFile("scores.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	err = writer.Write([]string{string(initials), game.stopwatch.Elapsed().String(), time.Now().String()})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	writer.Flush()
 }

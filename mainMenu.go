@@ -45,7 +45,7 @@ func (m *mainMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *mainMenu) view() string {
 	builder := strings.Builder{}
-	builder.WriteString("Welcom to Vim-Minesweeper\n")
+	builder.WriteString("Welcome to Vim-Minesweeper\n")
 	builder.WriteString("Press j to move the cursor down, and k to move the cursor up.\n\n")
 
 	{ // option 1: Play menu

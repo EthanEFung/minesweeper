@@ -17,6 +17,7 @@ type model struct {
 	instructions *instructions
 	game         *game
 	saveMenu     *saveMenu
+	scores       *scores
 	current      current
 }
 
@@ -27,6 +28,7 @@ func NewModel() model {
 	m.mainMenu = NewMainMenu(m)
 	m.instructions = NewInstructions(m)
 	m.saveMenu = NewSaveMenu(m)
+	m.scores = NewScores(m)
 	m.current = m.mainMenu
 	return *m
 }
