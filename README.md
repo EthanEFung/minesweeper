@@ -27,8 +27,11 @@ go run .
 - [x] add timer
 - [x] add view of the number of "potential" mines (# of mines - # of flags placed)
 - [ ] ~~add mouse control~~
-- [ ] create scoreboard
+- [x] create scoreboard
 - [ ] make this into vim go! (Where all the operations are exclusively std vim operations)
 - [ ] create light and dark mode
 - [x] add how to play menu
 - [ ] allow users to jump multiple rows or columns
+- [ ] rank the scoreboard and have seperate views for the rankings of each mode
+- [ ] after a score has been saved, place the scores table cursor on the most recent score
+      (the game that was just played).

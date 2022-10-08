@@ -408,6 +408,9 @@ func (g *game) view() string {
 		}
 		b.WriteString("\n\n")
 	}
+	if g.gameState == wonGame {
+		b.WriteString("\nPress 'w' to save\n")
+	}
 	return b.String()
 }
 

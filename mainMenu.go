@@ -22,7 +22,7 @@ func (m *mainMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m.model, tea.Quit
 		case "j":
-			if m.cursor >= 1 {
+			if m.cursor >= 2 {
 				break
 			}
 			m.cursor += 1
@@ -37,6 +37,9 @@ func (m *mainMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.model.current = m.model.playMenu
 			case 1:
 				m.model.current = m.model.instructions
+			case 2:
+				m.model.current = m.model.scores
+				m.model.scores.table.Focus()
 			}
 		}
 	}
@@ -67,7 +70,18 @@ func (m *mainMenu) view() string {
 			builder.WriteString(" ")
 		}
 		builder.WriteString("]")
-		builder.WriteString(" How to play\n\n")
+		builder.WriteString(" How to play\n")
+	}
+
+	{ // option 3: scores
+		builder.WriteString("[")
+		if m.cursor == 2 {
+			builder.WriteString(">")
+		} else {
+			builder.WriteString(" ")
+		}
+		builder.WriteString("]")
+		builder.WriteString(" Scores\n\n")
 	}
 
 	builder.WriteString("Press 'enter' to select\n")
