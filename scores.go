@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -126,8 +127,8 @@ func readCSV() (sortable, error) {
 
 func deriveRows(records [][]string) []table.Row {
 	rows := []table.Row{}
-	for _, record := range records {
-		rows = append(rows, table.Row{"", record[3], record[1], record[0]})
+	for i, record := range records {
+		rows = append(rows, table.Row{strconv.Itoa(i+1), record[3], record[1], record[0]})
 	}
 	return rows
 }
