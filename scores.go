@@ -4,7 +4,9 @@ import (
 	"encoding/csv"
 	"log"
 	"os"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,6 +18,37 @@ scores ...
 type scores struct {
 	model *model
 	table table.Model
+}
+
+type sortable [][]string
+
+func (rows sortable) Len() int { return len(rows) }
+func (rows sortable) Swap(i, j int) { rows[i],rows[j] = rows[j], rows[i] }
+func (rows sortable) Less(i, j int) bool {
+	a, b := rows[i], rows[j]
+	
+	durationA, err := time.ParseDuration(a[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	durationB, err := time.ParseDuration(b[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	if durationA != durationB {
+		return durationA < durationB
+	}
+
+	playedA, err := time.Parse(time.UnixDate, a[2])
+	if err != nil {
+		log.Fatal(err)
+	}
+	playedB, err := time.Parse(time.UnixDate, b[2])
+	if err != nil {
+		log.Fatal(err)
+	}
+	return playedA.Before(playedB)
+
 }
 
 func NewScores(m *model) *scores {
@@ -66,6 +99,8 @@ func NewTable() table.Model {
 		log.Fatal(err)
 	}
 
+	sort.Sort(records)
+
 	rows := deriveRows(records)
 
 	t := table.New(
@@ -78,7 +113,7 @@ func NewTable() table.Model {
 	return t
 }
 
-func readCSV() ([][]string, error) {
+func readCSV() (sortable, error) {
 	file, err := os.OpenFile("scores.csv", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		log.Fatal(err)

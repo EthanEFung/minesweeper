@@ -57,7 +57,6 @@ func (m *saveMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			save(m.model.game, m.initials)
 			m.model.scores.reevaluate()
 			m.model.current = m.model.scores
-			m.model.scores.table.Focus()
 		case "h":
 			if m.cursor > 0 {
 				m.cursor--
