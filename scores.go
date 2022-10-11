@@ -23,10 +23,10 @@ type scores struct {
 
 type sortable [][]string
 
-func (rows sortable) Len() int { return len(rows) }
-func (rows sortable) Swap(i, j int) { rows[i],rows[j] = rows[j], rows[i] }
-func (rows sortable) Less(i, j int) bool {
-	a, b := rows[i], rows[j]
+func (records sortable) Len() int { return len(records) }
+func (records sortable) Swap(i, j int) { records[i],records[j] = records[j], records[i] }
+func (records sortable) Less(i, j int) bool {
+	a, b := records[i], records[j]
 	
 	durationA, err := time.ParseDuration(a[1])
 	if err != nil {
