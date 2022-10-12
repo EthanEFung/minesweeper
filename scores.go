@@ -40,11 +40,11 @@ func (records sortable) Less(i, j int) bool {
 		return durationA < durationB
 	}
 
-	playedA, err := time.Parse(time.UnixDate, a[2])
+	playedA, err := time.Parse(time.RFC3339, a[2])
 	if err != nil {
 		log.Fatal(err)
 	}
-	playedB, err := time.Parse(time.UnixDate, b[2])
+	playedB, err := time.Parse(time.RFC3339, b[2])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +53,11 @@ func (records sortable) Less(i, j int) bool {
 }
 
 func NewScores(m *model) *scores {
-	return &scores{m, NewTable()}
+	records, err := readCSV()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &scores{m, NewTable(records)}
 }
 
 func (s *scores) update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -84,20 +88,19 @@ func (s *scores) view() string {
 	reevaluate will read the csv file again and set the records to the new values
 */
 func (s *scores) reevaluate() {
-	s.table = NewTable()
+	records, err := readCSV()
+	if err != nil {
+		log.Fatal(err)
+	}
+	s.table = NewTable(records)
 }
 
-func NewTable() table.Model {
+func NewTable(records sortable) table.Model {
 	columns := []table.Column{
 		{Title: "Rank", Width: 5},
 		{Title: "Mode", Width: 12},
 		{Title: "Time", Width: 10},
 		{Title: "Player", Width: 6},
-	}
-	records, err := readCSV()
-
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	sort.Sort(records)
@@ -111,8 +114,12 @@ func NewTable() table.Model {
 		table.WithHeight(10),
 	)
 
+	cursor := latestIndex(records)
+	t.SetCursor(cursor)
+
 	return t
 }
+
 
 func readCSV() (sortable, error) {
 	file, err := os.OpenFile("scores.csv", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
@@ -131,4 +138,25 @@ func deriveRows(records [][]string) []table.Row {
 		rows = append(rows, table.Row{strconv.Itoa(i+1), record[3], record[1], record[0]})
 	}
 	return rows
+}
+
+func latestIndex(records [][]string) int {
+	if len(records) == 0 {
+		return 1 
+	}
+	var l int
+	for i, record := range records {
+		t, err := time.Parse(time.RFC3339, record[2])
+		if err != nil {
+			log.Fatal(err)
+		}
+		latest, err := time.Parse(time.RFC3339, records[l][2])
+		if err != nil {
+			log.Fatal(err)
+		}
+		if latest.After(t) {
+			l = i
+		}
+	}
+	return l + 1
 }

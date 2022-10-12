@@ -33,5 +33,6 @@ go run .
 - [x] add how to play menu
 - [ ] allow users to jump multiple rows or columns
 - [ ] rank the scoreboard and have seperate views for the rankings of each mode
-- [ ] after a score has been saved, place the scores table cursor on the most recent score
+- [x] after a score has been saved, place the scores table cursor on the most recent score
       (the game that was just played).
+- [x] bug: timer not reset after each won game

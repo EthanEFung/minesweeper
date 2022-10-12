@@ -39,7 +39,6 @@ func (m *mainMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.model.current = m.model.instructions
 			case 2:
 				m.model.current = m.model.scores
-				m.model.scores.table.Focus()
 			}
 		}
 	}

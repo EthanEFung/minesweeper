@@ -55,6 +55,7 @@ func (m *saveMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.model.current = m.model.mainMenu
 		case "y":
 			save(m.model.game, m.initials)
+			m.model.game = NewGame(m.model)
 			m.model.scores.reevaluate()
 			m.model.current = m.model.scores
 		case "h":
@@ -86,7 +87,12 @@ func save(game *game, initials []rune) {
 	defer file.Close()
 
 	writer := csv.NewWriter(file)
-	err = writer.Write([]string{string(initials), game.stopwatch.Elapsed().String(), time.Now().String(), game.mode.String()})
+
+	currentTime, err := time.Now().MarshalText()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = writer.Write([]string{string(initials), game.stopwatch.Elapsed().String(), string(currentTime), game.mode.String()})
 
 	if err != nil {
 		log.Fatal(err)
