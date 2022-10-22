@@ -23,11 +23,11 @@ type scores struct {
 
 type sortable [][]string
 
-func (records sortable) Len() int { return len(records) }
-func (records sortable) Swap(i, j int) { records[i],records[j] = records[j], records[i] }
+func (records sortable) Len() int      { return len(records) }
+func (records sortable) Swap(i, j int) { records[i], records[j] = records[j], records[i] }
 func (records sortable) Less(i, j int) bool {
 	a, b := records[i], records[j]
-	
+
 	durationA, err := time.ParseDuration(a[1])
 	if err != nil {
 		log.Fatal(err)
@@ -120,7 +120,6 @@ func NewTable(records sortable) table.Model {
 	return t
 }
 
-
 func readCSV() (sortable, error) {
 	file, err := os.OpenFile("scores.csv", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
@@ -135,14 +134,14 @@ func readCSV() (sortable, error) {
 func deriveRows(records [][]string) []table.Row {
 	rows := []table.Row{}
 	for i, record := range records {
-		rows = append(rows, table.Row{strconv.Itoa(i+1), record[3], record[1], record[0]})
+		rows = append(rows, table.Row{strconv.Itoa(i + 1), record[3], record[1], record[0]})
 	}
 	return rows
 }
 
 func latestIndex(records [][]string) int {
 	if len(records) == 0 {
-		return 1 
+		return 0
 	}
 	var l int
 	for i, record := range records {
@@ -154,9 +153,12 @@ func latestIndex(records [][]string) int {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if latest.After(t) {
+		if latest.Before(t) {
 			l = i
 		}
 	}
-	return l + 1
+  if l == 0 {
+    log.Fatal(records[0][2]) 
+  }
+	return l 
 }
