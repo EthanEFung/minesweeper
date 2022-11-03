@@ -157,8 +157,8 @@ func latestIndex(records [][]string) int {
 			l = i
 		}
 	}
-  if l == 0 {
-    log.Fatal(records[0][2]) 
-  }
-	return l 
+	if l == 0 {
+		log.Fatal(records[0][2])
+	}
+	return l
 }

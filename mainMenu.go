@@ -1,88 +1,95 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type mainMenu struct {
-	model  *model
-	cursor int
+	model   *model
+	cursor  int
+	list    list.Model
+	message tea.Msg
+}
+
+var (
+	mainMenuStyle     = lipgloss.NewStyle().Margin(1, 2)
+	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
+	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(4).Foreground(lipgloss.Color("170"))
+)
+
+type item string
+
+func (i item) FilterValue() string { return string(i) }
+
+type delegate struct{}
+
+func (d delegate) Height() int                               { return 1 }
+func (d delegate) Spacing() int                              { return 0 }
+func (d delegate) Update(msg tea.Msg, m *list.Model) tea.Cmd { return nil }
+func (d delegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
+	i, ok := listItem.(item)
+	if !ok {
+		return
+	}
+
+	str := fmt.Sprintf("  %s", i)
+
+	fn := itemStyle.Render
+	if index == m.Index() {
+		fn = func(s string) string {
+			return selectedItemStyle.Render("> " + s[2:])
+		}
+	}
+
+	fmt.Fprint(w, fn(str))
 }
 
 func NewMainMenu(m *model) *mainMenu {
-	return &mainMenu{m, 0}
+	items := []list.Item{
+		item("Play"),
+		item("How to play"),
+		item("Scores"),
+	}
+	list := list.New(items, delegate{}, 20, 14)
+	list.SetShowStatusBar(false)
+	list.SetFilteringEnabled(false)
+	list.Title = "Welcome to Vim-Minesweeper"
+	return &mainMenu{m, 0, list, nil}
 }
 
 func (m *mainMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.list.SetWidth(msg.Width)
+		return m.model, nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m.model, tea.Quit
-		case "j":
-			if m.cursor >= 2 {
-				break
-			}
-			m.cursor += 1
-		case "k":
-			if m.cursor <= 0 {
-				break
-			}
-			m.cursor -= 1
 		case "enter":
-			switch m.cursor {
-			case 0:
+			switch m.list.SelectedItem().FilterValue() {
+			case "Play":
 				m.model.current = m.model.playMenu
-			case 1:
+			case "How to play":
 				m.model.current = m.model.instructions
-			case 2:
+			case "Scores":
 				m.model.current = m.model.scores
 			}
 		}
 	}
-	return m.model, nil
+	var cmd tea.Cmd
+	m.list, cmd = m.list.Update(msg)
+	return m.model, cmd
 }
 
 func (m *mainMenu) view() string {
 	builder := strings.Builder{}
-	builder.WriteString("Welcome to Vim-Minesweeper\n")
-	builder.WriteString("Press j to move the cursor down, and k to move the cursor up.\n\n")
-
-	{ // option 1: Play menu
-		builder.WriteString("[")
-		if m.cursor == 0 {
-			builder.WriteString(">")
-		} else {
-			builder.WriteString(" ")
-		}
-		builder.WriteString("]")
-		builder.WriteString(" Play\n")
-	}
-
-	{ // option 2: How to play
-		builder.WriteString("[")
-		if m.cursor == 1 {
-			builder.WriteString(">")
-		} else {
-			builder.WriteString(" ")
-		}
-		builder.WriteString("]")
-		builder.WriteString(" How to play\n")
-	}
-
-	{ // option 3: scores
-		builder.WriteString("[")
-		if m.cursor == 2 {
-			builder.WriteString(">")
-		} else {
-			builder.WriteString(" ")
-		}
-		builder.WriteString("]")
-		builder.WriteString(" Scores\n\n")
-	}
-
-	builder.WriteString("Press 'enter' to select\n")
-	return builder.String()
+	builder.WriteString(m.list.View())
+	return mainMenuStyle.Render(builder.String())
 }
