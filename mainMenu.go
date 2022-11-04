@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -89,7 +88,5 @@ func (m *mainMenu) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *mainMenu) view() string {
-	builder := strings.Builder{}
-	builder.WriteString(m.list.View())
-	return mainMenuStyle.Render(builder.String())
+	return mainMenuStyle.Render(m.list.View())
 }
